@@ -20,6 +20,9 @@
     "locale/*.json",
     "icon.svg"
   ],
+  "scripts": {
+    "docs": "node scripts/gen-doc.mjs"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
