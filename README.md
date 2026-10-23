@@ -3,6 +3,8 @@
 [![CI](https://github.com/qyy2005/dsh-plugin-labels/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/qyy2005/dsh-plugin-labels/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+> 版本更新记录见 [CHANGELOG.md](CHANGELOG.md)，或在 GitHub [Releases](https://github.com/qyy2005/dsh-plugin-labels/releases) 查看。
+
 给 DSH（DeepSeek Harness）**已安装插件**配「中文名 + 一句话说明」：官方「插件」页的已安装插件行、插件包卡片与详情页都会**原地显示中文名与中文描述**（由 host 覆盖显示元数据）；新装插件会在启动后自动翻译。**本插件没有任何 UI 入口**（没有 tab、没有设置项），管理通过 loopback HTTP API 或让 AI 代改。
 
 - 当前版本：**0.8.0**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
