@@ -2,7 +2,7 @@
 
 给 DSH（DeepSeek Harness）**已安装插件**配「中文名 + 一句话说明」，并在官方**侧栏「插件」页**和**设置 → 内置插件分区**的「中文名」标签页里，以「中文名 → 原始包名 → 一句话中文介绍」三层展示。
 
-- 当前版本：**0.6.0**（本仓库即源码目录；本机以 `link:` 方式安装到 DSH profile）
+- 当前版本：**0.6.1**（本仓库即源码目录；本机以 `link:` 方式安装到 DSH profile）
 - 只支持 DSH 桌面版 Web GUI（开发验证版本 0.2.1-rc.2）
 
 ## 功能
@@ -15,7 +15,7 @@
 - **导出 / 导入**：导出带 `source`（`ai` / `manual`）的 JSON，导入时保留来源，只接受已安装插件名（≤64KB）。
 - **单条操作**：编辑、重翻、恢复 AI；英文原文折叠在行底部。
 - **徽章**：官方内置、手改、AI。
-- **官方插件页原地中文（实验特性，v0.6.0，默认开启）**：host 会在运行时覆盖官方「插件」页的显示元数据，让官方「已安装插件」列表与详情页里的英文名**原地变成中文名**；未翻译的插件回退英文。默认开启，需重启 DSH 一次生效；可用 `DSH_PLUGIN_LABELS_OFFICIAL_META=0` 关闭（详见下文）。
+- **官方插件页原地中文（实验特性，v0.6.1，默认开启）**：host 会在运行时覆盖官方「插件」页的显示元数据，让官方「已安装插件」列表与详情页里的英文名**原地变成中文名**；未翻译的插件回退英文。默认开启，需重启 DSH 一次生效；可用 `DSH_PLUGIN_LABELS_OFFICIAL_META=0` 关闭（详见下文）。
 
 ## 界面
 
@@ -30,7 +30,7 @@
 
 ## 官方插件页原地显示中文（实验特性，默认开启）
 
-v0.6.0 起，host 半边会在运行时包装宿主内部的 `pluginPackages.metaOf()`，把标签缓存里的中文名与一句话说明作为 `{en, zh}` 覆盖到官方「插件」页（「已安装插件」列表行标题 + 点开详情页的标题/描述）上。**这是纯显示层覆盖**：不改任何插件包文件，也不影响包身份、安装、更新与卸载；**默认开启**。
+v0.6.0 起，host 半边会在运行时包装宿主内部的 `pluginPackages.metaOf()`，把标签缓存里的中文名与一句话说明作为 `{en, zh}` 覆盖到官方「插件」页（「已安装插件」列表行标题 + 点开详情页的标题/描述）上。**这是纯显示层覆盖**：不改任何插件包文件，也不影响包身份、安装、更新与卸载；**默认开启**。v0.6.1 起改用 symbol 标记识别 wrapper（Cordis 的 `ctx.get` 返回 traceable Proxy、函数引用每次不同），修复了 `patched` 状态误判与重复包装。
 
 - **效果**：官方「已安装插件」列表与详情页里的英文名原地显示为中文名，描述显示中文一句话；没有标签的插件回退英文（与原行为一致）。
 - **原理**：官方页面通过 `pluginPackages.metaOf(specifier, parentURL)` 读取每个包的显示元数据（它会读该包 `locale/*.json` 的 `meta`，缺省回退 `package.json` 的 name/description）。官方没有行级扩展点，所以这里在进程内包装该方法，用标签缓存补上 `title`/`description` 的 `{en, zh}` 语言映射，其余字段（如 `icon`、`error`）原样保留。
@@ -131,6 +131,6 @@ MIT，见 [LICENSE](LICENSE)。Copyright (c) 2026 qyy2005
 
 `dsh-plugin-labels` is a DSH (DeepSeek Harness) plugin that gives every installed plugin a Chinese name and a one-line explanation. It adds a **Labels** tab to both the sidebar **Plugins** page and the **built-in plugins** settings section. Each row shows the Chinese name as the headline, the original package name below it, and a one-line Chinese description; the full English description stays collapsed. Translation is strictly on demand (tokens are spent only when you press the translate button), results are cached under `<DSH_HOME>/plugin-labels.json`, and manual edits are never overwritten by automatic translation. Labels can be searched, exported and imported (their `ai`/`manual` origin is preserved).
 
-Since v0.6.0 the host half also overrides the official Plugins page display metadata at runtime (display-only, enabled by default), so the official installed-plugins list and detail pages show the Chinese names in place; untranslated plugins keep their English names. Set `DSH_PLUGIN_LABELS_OFFICIAL_META=0` and restart DSH to disable it. The repository also ships a generated plugin index (`PLUGINS.zh.md` / `PLUGINS.zh.html`), rebuilt with `node scripts/gen-doc.mjs`.
+Since v0.6.1 the host half also overrides the official Plugins page display metadata at runtime (display-only, enabled by default), so the official installed-plugins list and detail pages show the Chinese names in place; untranslated plugins keep their English names. Set `DSH_PLUGIN_LABELS_OFFICIAL_META=0` and restart DSH to disable it. The repository also ships a generated plugin index (`PLUGINS.zh.md` / `PLUGINS.zh.html`), rebuilt with `node scripts/gen-doc.mjs`.
 
 The client half is a hand-written `__ModuleLoader__` bundle with no build step that only requires `react`; the host half is an ESM plugin exposing four loopback-only HTTP routes. Verified on DSH desktop 0.2.1-rc.2. MIT licensed.
