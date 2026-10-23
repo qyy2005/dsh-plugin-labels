@@ -84,8 +84,8 @@ npm run docs                            # 等价于 node scripts/gen-doc.mjs
 ## 兼容性
 
 - DSH 桌面版 **0.2.1-rc.2**（Web GUI）；依赖官方 client 基座模块与 host 服务，只 `require("react")`。
-- 使用的官方 slot：`plugins.tab`（owner：`@deepseek-ai/dsh-client-ui-plugin-manager`）、`settings.plugins.tab`（owner：`@deepseek-ai/dsh-client-ui-settings-plugins`），以及 `locale` 服务。
-- 若某个 slot 在当前 DSH 版本不存在，对应入口自动跳过，另一个入口仍可用。
+- 使用的官方 slot：`settings.plugins.tab`（owner：`@deepseek-ai/dsh-client-ui-settings-plugins`），以及 `locale` 服务；官方「插件」页的原地中文名由 host 侧包装 `pluginPackages.metaOf` 实现，不依赖该页面的额外 slot。
+- 若 `settings.plugins.tab` 在当前 DSH 版本不存在，管理页不可用（官方插件页的原地中文仍由 host 生效）。
 
 ## 开发说明
 
