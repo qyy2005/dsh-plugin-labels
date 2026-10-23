@@ -1,0 +1,8 @@
+node_modules/
+*.log
+*.tmp-*
+.DS_Store
+Thumbs.db
+.review-tmp/
+.builder-tmp/
+HANDOFF.md

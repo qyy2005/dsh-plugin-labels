@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Plugin Labels">
+  <rect x="6" y="14" width="52" height="36" rx="8" fill="#4D6BFE" opacity="0.16"/>
+  <rect x="6" y="14" width="52" height="36" rx="8" fill="none" stroke="#4D6BFE" stroke-width="2"/>
+  <path d="M20 26h24M20 33h18M20 40h12" stroke="#4D6BFE" stroke-width="3" stroke-linecap="round"/>
+</svg>

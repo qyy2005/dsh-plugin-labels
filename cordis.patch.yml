@@ -1,0 +1,4 @@
+# dsh-plugin-labels — mount the host half when this package is a profile bundle.
+- insert:
+    - id: plugin-labels
+      name: "dsh-plugin-labels"
