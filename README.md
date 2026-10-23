@@ -15,7 +15,7 @@
 - **导出 / 导入**：导出带 `source`（`ai` / `manual`）的 JSON，导入时保留来源，只接受已安装插件名（≤64KB）。
 - **单条操作**：编辑、重翻、恢复 AI；英文原文折叠在行底部。
 - **徽章**：官方内置、手改、AI。
-- **官方插件页原地中文（实验特性，v0.6.0，默认关闭）**：可选开启 host 运行时覆盖，让官方「插件」页列表与详情页的英文名**原地变成中文名**；需设置 `DSH_PLUGIN_LABELS_OFFICIAL_META=1` 并重启 DSH 才生效（详见下文）。
+- **官方插件页原地中文（实验特性，v0.6.0，默认开启）**：host 会在运行时覆盖官方「插件」页的显示元数据，让官方「已安装插件」列表与详情页里的英文名**原地变成中文名**；未翻译的插件回退英文。默认开启，需重启 DSH 一次生效；可用 `DSH_PLUGIN_LABELS_OFFICIAL_META=0` 关闭（详见下文）。
 
 ## 界面
 
@@ -28,16 +28,16 @@
 
 顶部工具栏：搜索框、「翻译未翻译的」、导出、导入；行右侧：编辑 / 重翻 / 恢复AI。
 
-## 官方插件页原地显示中文（实验特性，默认关闭）
+## 官方插件页原地显示中文（实验特性，默认开启）
 
-v0.6.0 起，host 半边可以选择性地在运行时包装宿主内部的 `pluginPackages.metaOf()`，把标签缓存里的中文名与一句话说明作为 `{en, zh}` 覆盖到官方「插件」页（列表行标题 + 详情页标题/描述）上。**这是纯显示层覆盖**：不改任何插件包文件，也不影响包身份、安装、更新与卸载；**默认关闭**，只有显式开启才生效。
+v0.6.0 起，host 半边会在运行时包装宿主内部的 `pluginPackages.metaOf()`，把标签缓存里的中文名与一句话说明作为 `{en, zh}` 覆盖到官方「插件」页（「已安装插件」列表行标题 + 点开详情页的标题/描述）上。**这是纯显示层覆盖**：不改任何插件包文件，也不影响包身份、安装、更新与卸载；**默认开启**。
 
-- **开启方式**：启动 DSH 前设置环境变量 `DSH_PLUGIN_LABELS_OFFICIAL_META=1`，然后重启 DSH。未设置、设为 `0` 或其它值都不会安装补丁（保持宿主原行为）。
-- **效果**：官方「插件」页列表与详情页里的英文名原地显示为中文名，描述显示中文一句话；没有标签的插件回退英文（与原行为一致）。
-- **原理**：官方页面通过 `pluginPackages.metaOf(specifier, parentURL)` 读取每个包的显示元数据（它会读该包 `locale/*.json` 的 `meta`，缺省回退 `package.json` 的 name/description）。官方没有行级扩展点，所以这里在进程内包装该方法，返回叠加后的 `title`/`description` 语言映射，其余字段（如 `icon`、`error`）原样保留。
+- **效果**：官方「已安装插件」列表与详情页里的英文名原地显示为中文名，描述显示中文一句话；没有标签的插件回退英文（与原行为一致）。
+- **原理**：官方页面通过 `pluginPackages.metaOf(specifier, parentURL)` 读取每个包的显示元数据（它会读该包 `locale/*.json` 的 `meta`，缺省回退 `package.json` 的 name/description）。官方没有行级扩展点，所以这里在进程内包装该方法，用标签缓存补上 `title`/`description` 的 `{en, zh}` 语言映射，其余字段（如 `icon`、`error`）原样保留。
 - **失败安全**：拿不到服务、方法不是函数、赋值失败或读缓存失败时，全部静默 warn 并回退宿主原返回值；包装可被 disposer 恢复，也能在服务实例被替换（HMR/刷新）后重新包装。
-- **限制**：依赖 DSH 内部服务，DSH 升级后可能失效（失效时自动回退英文，插件其它功能不受影响）；仅影响显示；若某些页面直接读 `package.json` 而不走 `metaOf`，则不受影响。
-- **验证**：重启后 `GET /api/plugin-labels/list` 的响应里 `officialMeta` 字段（`{enabled, patched, service}`）可确认补丁是否已生效；默认关闭时应为 `enabled:false`。
+- **限制**：依赖 DSH 内部服务，DSH 升级后可能失效（失效时自动回退英文，插件其它功能不受影响）；仅影响显示，不影响包身份/安装/更新；若某些页面直接读 `package.json` 而不走 `metaOf`，则不受影响。已知限制：官方插件行没有行级 slot，所以只能通过包装显示元数据实现，无法做行内图标/按钮等更细的定制。
+- **关闭方式**：启动 DSH 前设置环境变量 `DSH_PLUGIN_LABELS_OFFICIAL_META=0`，然后重启 DSH。未设置、设为 `1` 或其它值都保持默认开启。
+- **生效方式**：host 代码在进程启动时安装，**需要重启 DSH 一次**；重启后 `GET /api/plugin-labels/list` 的响应里 `officialMeta` 字段（`{enabled, patched, service}`）可确认补丁是否已生效，默认应为 `enabled:true`。
 
 ## 安装
 
@@ -131,6 +131,6 @@ MIT，见 [LICENSE](LICENSE)。Copyright (c) 2026 qyy2005
 
 `dsh-plugin-labels` is a DSH (DeepSeek Harness) plugin that gives every installed plugin a Chinese name and a one-line explanation. It adds a **Labels** tab to both the sidebar **Plugins** page and the **built-in plugins** settings section. Each row shows the Chinese name as the headline, the original package name below it, and a one-line Chinese description; the full English description stays collapsed. Translation is strictly on demand (tokens are spent only when you press the translate button), results are cached under `<DSH_HOME>/plugin-labels.json`, and manual edits are never overwritten by automatic translation. Labels can be searched, exported and imported (their `ai`/`manual` origin is preserved).
 
-Since v0.6.0 the host half can also, as an opt-in experiment, override the official Plugins page display metadata at runtime (display-only), so the official list rows and detail pages show the Chinese names in place; untranslated plugins keep their English names. It is disabled by default: set `DSH_PLUGIN_LABELS_OFFICIAL_META=1` and restart DSH to enable it. The repository also ships a generated plugin index (`PLUGINS.zh.md` / `PLUGINS.zh.html`), rebuilt with `node scripts/gen-doc.mjs`.
+Since v0.6.0 the host half also overrides the official Plugins page display metadata at runtime (display-only, enabled by default), so the official installed-plugins list and detail pages show the Chinese names in place; untranslated plugins keep their English names. Set `DSH_PLUGIN_LABELS_OFFICIAL_META=0` and restart DSH to disable it. The repository also ships a generated plugin index (`PLUGINS.zh.md` / `PLUGINS.zh.html`), rebuilt with `node scripts/gen-doc.mjs`.
 
 The client half is a hand-written `__ModuleLoader__` bundle with no build step that only requires `react`; the host half is an ESM plugin exposing four loopback-only HTTP routes. Verified on DSH desktop 0.2.1-rc.2. MIT licensed.
