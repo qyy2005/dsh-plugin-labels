@@ -5,18 +5,24 @@
 
 给 DSH（DeepSeek Harness）**已安装插件**配「中文名 + 一句话说明」：官方「插件」页的已安装插件行、插件包卡片与详情页都会**原地显示中文名与中文描述**（由 host 覆盖显示元数据）；新装插件会在启动后自动翻译。**本插件没有任何 UI 入口**（没有 tab、没有设置项），管理通过 loopback HTTP API 或让 AI 代改。
 
-- 当前版本：**0.7.0**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
+- 当前版本：**0.8.0**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
 - 只支持 DSH 桌面版 Web GUI（开发验证版本 0.2.1-rc.2）
 
 ## 功能
 
-- **中文名 + 一句话说明**：每个插件一条中文名（≤8 字）和一句中文介绍（≤40 字）。
+- **中文名 + 一句话说明**：每个插件一条中文名（≤10 字）和一句说明（≤80 字）；说明必须写清**怎么用**，不只是“是什么”（见下方「标签格式」）。
 - **官方页原地中文**：官方「插件」页的已安装插件行、点开的详情页，以及插件包卡片（`listBundles`）都会直接显示中文名与中文描述；未翻译的插件回退英文。默认开启。
 - **自动翻译新插件**：host 启动约 4 秒后自动补一次缺失标签（每次最多 20 条，只补空缺、不覆盖手改），不用点任何按钮；可用 `DSH_PLUGIN_LABELS_AUTO_TRANSLATE=0` 关闭。
 - **手改优先**：手动设置的标签不会被自动翻译覆盖；显式“重翻”才会覆盖。
 - **无 UI 管理入口**：通过 4 个 loopback HTTP API（见「使用」）或让 AI/脚本直接调用它们来翻译、手改、重翻、导入导出。
 - **导出 / 导入 API**：导出带 `source`（`ai` / `manual`）的 JSON，导入时保留来源，只接受已安装插件名（≤64KB）。
 - **缓存 v2**：标签缓存在 `<DSH_HOME>/plugin-labels.json`，UTF-8 无 BOM、原子写，旧 v1 数据可迁移读取。
+
+### 标签格式
+
+- **中文名**：≤10 个汉字，命名它“做什么”，不直译包名、不用营销词。
+- **一句话说明**：≤80 字，必须同时回答：①这插件解决什么问题；②在 DSH 里从哪里进入 / 怎么操作（例如：设置 → 某个分区、侧栏 → 某个页面、在对话里下指令、装好自动生效）；③必要时给一句可执行的第一步。
+- 模型无法从包名/描述判断入口时，会被要求写「**入口以界面为准**」并给出用户能做的第一步；**不会编造不存在的菜单或按钮**。
 
 ## 界面
 
@@ -52,7 +58,7 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 ### 方式一：npm 包（推荐，`npm publish` 后）
 
 在 DSH 插件页 → 添加插件 → 填包名 `dsh-plugin-labels`；或在创造模式会话里 `plugin_manager` → `install_bundle` → `target: "dsh-plugin-labels"`。发布后 profile 依赖形如
-`"dsh-plugin-labels": "dsh-plugin-labels@^0.7.0"`。
+`"dsh-plugin-labels": "dsh-plugin-labels@^0.8.0"`。
 
 ### 方式二：从 Git 仓库安装
 
@@ -163,6 +169,8 @@ MIT，见 [LICENSE](LICENSE)。Copyright (c) 2026 qyy2005
 ## English summary
 
 `dsh-plugin-labels` is a DSH (DeepSeek Harness) plugin that gives every installed plugin a Chinese name and a one-line explanation. The labels are shown **in place** on the official Plugins page: the installed-plugin rows, the detail pages and the plugin package cards (`pluginManager.listBundles`) all display the Chinese name and description, falling back to English for plugins without a label. **The plugin has no UI entry point** (no tab, no settings item): labels are managed through four loopback HTTP routes (or by an AI/script calling them), and results are cached under `<DSH_HOME>/plugin-labels.json` with manual edits never overwritten by automatic translation.
+
+Each label is a Chinese name (≤10 characters) plus a one-line explanation (≤80 characters) that must explain **how to use** the plugin: the problem it solves, where in DSH the user enters or operates it, and a concrete first step. When the entry point cannot be inferred, the model is instructed to write 入口以界面为准 instead of inventing menus.
 
 Newly installed plugins are translated automatically: about 4 seconds after host startup one pass fills up to 20 missing labels (set `DSH_PLUGIN_LABELS_AUTO_TRANSLATE=0` and restart DSH to disable it). The display overrides can be disabled together with `DSH_PLUGIN_LABELS_OFFICIAL_META=0`; `GET /api/plugin-labels/list` reports `officialMeta: {enabled, patched, service, bundles}` for diagnostics. Both overrides require one DSH restart after installation.
 
