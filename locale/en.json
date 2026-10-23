@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "Plugin Labels",
-    "description": "Adds a Chinese-name tab to both the sidebar Plugins page and the built-in plugins settings section, with Chinese names and one-line explanations for installed plugins; translates on demand."
+    "description": "Adds a Labels management tab under Settings → built-in plugins (translate/edit/import/export); installed plugins' Chinese names are shown in place on the official Plugins page."
   }
 }

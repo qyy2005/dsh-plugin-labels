@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-labels",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -32,7 +32,6 @@
       "immediately": true,
       "inject": [
         "@deepseek-ai/dsh-client-locale",
-        "@deepseek-ai/dsh-client-ui-plugin-manager",
         "@deepseek-ai/dsh-client-ui-settings-plugins"
       ]
     }
