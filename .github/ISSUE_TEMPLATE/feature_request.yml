@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest an idea or improvement for dsh-plugin-labels.
+title: "[Feature] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢建议！请先说明使用场景，再描述期望的结果。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 要解决的问题
+      description: 你的使用场景是什么？现在哪里不方便？
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 期望方案
+      description: 你希望插件怎么做？（不要求实现细节）
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 备选方案
+      description: 你考虑过的其它做法或临时绕过方式。
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: 附加上下文
+      description: 截图、相关 issue、DSH 版本等。
+    validations:
+      required: false

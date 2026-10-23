@@ -1,5 +1,8 @@
 # dsh-plugin-labels
 
+[![CI](https://github.com/qyy2005/dsh-plugin-labels/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/qyy2005/dsh-plugin-labels/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 给 DSH（DeepSeek Harness）**已安装插件**配「中文名 + 一句话说明」：官方「插件」页的已安装列表与详情页会**原地显示中文名**（由 host 覆盖显示元数据），管理入口（翻译 / 手改 / 重翻 / 导入导出）在**设置 → 内置插件**的「中文名」标签页里。
 
 - 当前版本：**0.6.2**（本仓库即源码目录；本机以 `link:` 方式安装到 DSH profile）
@@ -19,7 +22,11 @@
 
 ## 界面
 
-「中文名」tab（**设置 → 内置插件**，v0.6.2 起侧栏「插件」页不再有这个 tab）里，每行按用户要求的层级排列：
+官方「插件」页的已安装列表直接显示中文名与中文描述（v0.6.0+）：
+
+![官方插件页的中文名](docs/official-page.png)
+
+管理入口在**设置 → 内置插件**的「中文名」tab 里（v0.6.2 起侧栏「插件」页不再有这个 tab），每行按用户要求的层级排列：
 
 1. **中文名**（主标题，替代原来的英文名；未翻译时显示灰色「未翻译」）；
 2. **原始包名 + 版本 + 徽章**（等宽字体、低对比度）；
@@ -105,6 +112,11 @@ npm run docs                            # 等价于 node scripts/gen-doc.mjs
 ```
 dsh-plugin-labels/
 ├─ .gitignore              # 忽略 node_modules、日志与本地内部文档
+├─ .github/
+│  ├─ ISSUE_TEMPLATE/      # Bug / Feature 的 issue forms
+│  └─ workflows/ci.yml     # GitHub Actions：node --check + JSON/BOM 校验
+├─ docs/
+│  └─ official-page.png    # 官方「插件」页原地显示中文名的截图
 ├─ package.json            # manifest（dsh.bundle 组合 patch、dsh.client 平台与 inject）
 ├─ cordis.patch.yml        # bundle 组合 patch
 ├─ lib/

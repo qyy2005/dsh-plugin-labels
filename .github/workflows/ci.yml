@@ -1,0 +1,54 @@
+name: ci
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: syntax-and-metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Syntax check
+        run: |
+          node --check lib/index.js
+          node --check lib/client.js
+          node --check scripts/gen-doc.mjs
+
+      - name: JSON and BOM checks
+        run: |
+          node -e '
+          const fs = require("node:fs");
+          let failed = false;
+          for (const file of ["package.json", "locale/zh.json", "locale/en.json"]) {
+            const bytes = fs.readFileSync(file);
+            const bom = bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf;
+            let parsed = true;
+            try {
+              JSON.parse(bytes.toString("utf8"));
+            } catch (error) {
+              parsed = false;
+              console.error(file + ": invalid JSON: " + error.message);
+            }
+            if (bom) console.error(file + ": starts with a BOM");
+            if (bom || !parsed) failed = true;
+            else console.log(file + ": OK");
+          }
+          for (const file of ["lib/index.js", "lib/client.js", "scripts/gen-doc.mjs", "README.md"]) {
+            const head = fs.readFileSync(file).subarray(0, 3);
+            if (head[0] === 0xef && head[1] === 0xbb && head[2] === 0xbf) {
+              console.error(file + ": starts with a BOM");
+              failed = true;
+            }
+          }
+          if (failed) process.exit(1);
+          '

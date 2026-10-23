@@ -1,0 +1,73 @@
+name: Bug report
+description: Something is broken in dsh-plugin-labels.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！请尽量填全下面的信息，尤其是 DSH 版本与复现步骤。
+        请勿粘贴 token、密钥或个人隐私；截图可以拖进输入框。
+  - type: input
+    id: dsh-version
+    attributes:
+      label: DSH 版本
+      description: 桌面版版本号（设置 / 关于里可以看到，例如 0.2.1-rc.2）
+      placeholder: 0.2.1-rc.2
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: 操作系统
+      placeholder: Windows 11 23H2
+    validations:
+      required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: 插件版本
+      description: package.json 里的版本号，或安装来源的 commit
+      placeholder: 0.6.2
+    validations:
+      required: true
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: "安装方式（是否 link: 安装）"
+      options:
+        - link: 本地目录安装（开发）
+        - 从 GitHub / 插件页安装
+        - npm 包安装
+        - 不确定
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 打开 …
+        2. 点击 …
+        3. 看到 …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 / 截图（可选）
+      description: DSH 控制台日志、`GET /api/plugin-labels/list` 输出或截图；请去掉敏感信息。
+      render: shell
+    validations:
+      required: false
