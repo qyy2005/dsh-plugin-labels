@@ -1,10 +1,27 @@
 {
   "name": "dsh-plugin-labels",
   "version": "0.7.0",
-  "private": true,
   "type": "module",
   "license": "MIT",
-  "description": "Give installed plugins a Chinese name and a one-line explanation; translate on demand.",
+  "description": "Chinese names and one-line explanations for installed DSH plugins; automatic translation and in-place display on the official Plugins page.",
+  "author": "qyy2005",
+  "homepage": "https://github.com/qyy2005/dsh-plugin-labels#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qyy2005/dsh-plugin-labels.git"
+  },
+  "bugs": {
+    "url": "https://github.com/qyy2005/dsh-plugin-labels/issues"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "dsh-plugin",
+    "labels",
+    "chinese",
+    "localization"
+  ],
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",
@@ -18,7 +35,8 @@
     "lib/client.js",
     "cordis.patch.yml",
     "locale/*.json",
-    "icon.svg"
+    "icon.svg",
+    "scripts/gen-doc.mjs"
   ],
   "scripts": {
     "docs": "node scripts/gen-doc.mjs"

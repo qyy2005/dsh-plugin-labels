@@ -5,7 +5,7 @@
 
 给 DSH（DeepSeek Harness）**已安装插件**配「中文名 + 一句话说明」：官方「插件」页的已安装插件行、插件包卡片与详情页都会**原地显示中文名与中文描述**（由 host 覆盖显示元数据）；新装插件会在启动后自动翻译。**本插件没有任何 UI 入口**（没有 tab、没有设置项），管理通过 loopback HTTP API 或让 AI 代改。
 
-- 当前版本：**0.7.0**（本仓库即源码目录；本机以 `link:` 方式安装到 DSH profile）
+- 当前版本：**0.7.0**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
 - 只支持 DSH 桌面版 Web GUI（开发验证版本 0.2.1-rc.2）
 
 ## 功能
@@ -22,7 +22,7 @@
 
 官方「插件」页的已安装插件行、插件包卡片与详情页直接显示中文名与中文描述（v0.6.0+，v0.7.0 起补上包级卡片）：
 
-![官方插件页的中文名](docs/official-page.png)
+![官方插件页的中文名](https://raw.githubusercontent.com/qyy2005/dsh-plugin-labels/main/docs/official-page.png)
 
 v0.7.0 起插件**没有任何 UI 入口**：没有「中文名」tab，也没有设置项。中文名由 host 覆盖官方显示元数据实现，管理与编辑走 HTTP API（见「使用」）。
 
@@ -49,22 +49,22 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 
 ## 安装
 
-### 方式一：本机目录安装（当前使用，`link:` 形式）
+### 方式一：npm 包（推荐，`npm publish` 后）
 
-本机已通过 DSH 的 `plugin_manager` → `install_bundle` 以**插件目录绝对路径**安装，profile 依赖形如
-`"dsh-plugin-labels": "link:<本机插件目录绝对路径>"`，`node_modules/dsh-plugin-labels` 是指向本目录的符号链接。
+在 DSH 插件页 → 添加插件 → 填包名 `dsh-plugin-labels`；或在创造模式会话里 `plugin_manager` → `install_bundle` → `target: "dsh-plugin-labels"`。发布后 profile 依赖形如
+`"dsh-plugin-labels": "dsh-plugin-labels@^0.7.0"`。
 
-- 在 DSH 创造模式会话里：`plugin_manager` → `action: install_bundle` → `target` 填本目录绝对路径；
-- 注意：`link:` 安装下**源码即已装内容**，源码目录不可删除或移动；改动 host `lib/index.js` 后需重启 DSH 生效（v0.7.0 起 client 已无 UI）。
+### 方式二：从 Git 仓库安装
+
+在 DSH 插件页 → 添加插件 → 填本仓库的 Git 地址（`https://github.com/qyy2005/dsh-plugin-labels`），DSH 会拉取并安装；此时 profile 依赖形如 `github:qyy2005/dsh-plugin-labels`。私有仓库需具备相应访问权限。
+
+### 方式三：本机目录安装（开发用，`link:` 形式）
+
+用 `plugin_manager` → `install_bundle` → `target` 填本目录绝对路径，profile 依赖形如 `link:<本机插件目录绝对路径>`，`node_modules/dsh-plugin-labels` 是指向本目录的符号链接。
+
+- 适合开发：源码即已装内容，改完刷新/重启即可；**源码目录不可删除或移动**。
+- 改 host `lib/index.js` 后需重启 DSH 才生效（v0.7.0 起 client 已无 UI）。
 - 不建议手工编辑 profile 的 `package.json` 来安装（易被 pnpm 清理）。
-
-### 方式二：从 Git 仓库安装（发布到 GitHub 后）
-
-在 DSH 插件页 → 添加插件 → 填本仓库的 Git 地址，DSH 会拉取并安装。私有仓库需具备相应访问权限。
-
-### 方式三：npm 包（发布到 npm 后）
-
-若将来发布到 npm registry，可在插件页填包名安装。**当前尚未发布到 npm**，请勿直接按包名安装。
 
 ## 使用
 
