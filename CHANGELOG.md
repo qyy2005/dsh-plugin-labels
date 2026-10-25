@@ -2,6 +2,19 @@
 
 本文件记录 `dsh-plugin-labels` 的版本变更；GitHub Releases 页面按版本展示同样的内容。
 
+## [0.9.1] - 2026-10-25
+
+### 修复
+- 技能中文说明改为**前置**：`中文：<作用>；用法：<怎么用> ｜ <英文原文>`。`/` 技能菜单会截断长英文描述，此前中文追加在末尾导致看不到。
+
+## [0.9.0] - 2026-10-25
+
+### 新增
+- **技能中文翻译 / 解释**：host 包装 `skills` 服务的 `snapshot` / `list`，给每条技能描述加上中文作用与用法，显示在 `/` 技能菜单。
+- 独立技能缓存 `<DSH_HOME>/plugin-labels-skills.json`（v1、原子写、UTF-8 无 BOM）；启动自动补最多 10 条，`DSH_PLUGIN_LABELS_AUTO_TRANSLATE=0` 可关。
+- 3 个 API：`GET /api/plugin-labels/skills`、`POST /api/plugin-labels/skills/translate`、`POST /api/plugin-labels/skills/label`；`/list` 的 `officialMeta.skills` 表示包装是否生效。
+- 限制：只翻译技能目录描述，技能正文（SKILL.md）仍是英文。
+
 ## [0.8.0] - 2026-10-23
 
 ### 变更
