@@ -7,7 +7,7 @@
 
 给 DSH（DeepSeek Harness）**已安装插件**配「中文名 + 一句话说明」：官方「插件」页的已安装插件行、插件包卡片与详情页都会**原地显示中文名与中文描述**（由 host 覆盖显示元数据）；新装插件会在启动后自动翻译。同时给 **skills（技能）** 补中文说明：`/` 技能菜单里每条技能显示「英文原描述 ｜中文：<作用>；用法：<怎么用>」。**本插件没有任何 UI 入口**（没有 tab、没有设置项），管理通过 loopback HTTP API 或让 AI 代改。
 
-- 当前版本：**0.9.3**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
+- 当前版本：**0.9.4**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
 - 只支持 DSH 桌面版 Web GUI（开发验证版本 0.2.1-rc.2 / rc.3）
 
 ## 功能
@@ -68,6 +68,8 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 - **缓存**：`<DSH_HOME>/plugin-labels-skills.json`（独立于插件标签缓存，`version: 1`，UTF-8 无 BOM、原子写）；每条 `{zh ≤22 字, usage ≤40 字, source: "ai" | "manual", at}`。
 - **API**（见「使用」）：`GET /api/plugin-labels/skills`、`POST /api/plugin-labels/skills/translate`、`POST /api/plugin-labels/skills/label`。
 - **自动翻译**：启动后约 4 秒的自动任务在补完插件标签后，会再补最多 **10** 条技能说明（`MAX_SKILLS_PER_AUTO`）；只补空缺、不覆盖手改；`DSH_PLUGIN_LABELS_AUTO_TRANSLATE=0` 同时关闭插件与技能自动翻译。
+- **新技能自动补翻译（v0.9.4）**：每 **5 分钟**扫描一次 `~/.agents/skills`、`$DSH_HOME/skills`、`<cwd>/.agents/skills` 下新增的 `SKILL.md`，发现未翻译的自动补；间隔用 `DSH_PLUGIN_LABELS_SKILL_SCAN_MS` 调整（最小 60000，`0` 关闭）。
+- **技能发现范围**：`skills` 服务的全局快照 + 上述文件系统目录合并去重，所以用户自己装的技能也会被翻译，不再依赖全局快照是否包含它。
 - **限制**：只翻译/解释技能的目录描述，**技能正文仍是英文**；中文替换后模型侧技能目录也显示中文（英文原文不再提供）；技能服务（`ctx.get("skills")`）不可用时静默跳过，不影响其它功能。
 - **重启**：host 代码在启动时安装，**需要重启 DSH 一次**；`GET /api/plugin-labels/list` 的 `officialMeta.skills` 可确认包装是否已生效。
 
@@ -76,7 +78,7 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 ### 方式一：npm 包（推荐，`npm publish` 后）
 
 在 DSH 插件页 → 添加插件 → 填包名 `dsh-plugin-labels`；或在创造模式会话里 `plugin_manager` → `install_bundle` → `target: "dsh-plugin-labels"`。发布后 profile 依赖形如
-`"dsh-plugin-labels": "dsh-plugin-labels@^0.9.3"`。
+`"dsh-plugin-labels": "dsh-plugin-labels@^0.9.4"`。
 
 ### 方式二：从 Git 仓库安装
 
@@ -92,7 +94,7 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 
 ## 使用
 
-v0.9.3 起没有 UI 入口，全部通过 7 个 loopback HTTP API 操作（也可以让 AI/脚本代改）：
+v0.9.4 起没有 UI 入口，全部通过 7 个 loopback HTTP API 操作（也可以让 AI/脚本代改）：
 
 ```powershell
 # 查看已装插件 + 标签 + 诊断字段（officialMeta）

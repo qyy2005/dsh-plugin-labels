@@ -2,6 +2,12 @@
 
 本文件记录 `dsh-plugin-labels` 的版本变更；GitHub Releases 页面按版本展示同样的内容。
 
+## [0.9.4] - 2026-10-27
+
+### 修复
+- **新装技能不翻译**：翻译发现改为「`skills` 全局快照 + 文件系统技能目录（`~/.agents/skills`、`$DSH_HOME/skills`、`<cwd>/.agents/skills`）合并去重」，并每 5 分钟扫描一次新增的 `SKILL.md` 自动补翻译（`DSH_PLUGIN_LABELS_SKILL_SCAN_MS` 可调，最小 60000，`0` 关闭）。
+- `GET /api/plugin-labels/skills` 现在也返回文件系统发现的技能，`count/pending` 不再只统计全局快照。
+
 ## [0.9.3] - 2026-10-25
 
 ### 变更

@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-labels",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "type": "module",
   "license": "MIT",
   "description": "Chinese names and one-line explanations for installed DSH plugins; automatic translation and in-place display on the official Plugins page.",
