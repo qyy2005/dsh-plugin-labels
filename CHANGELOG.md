@@ -2,6 +2,12 @@
 
 本文件记录 `dsh-plugin-labels` 的版本变更；GitHub Releases 页面按版本展示同样的内容。
 
+## [0.9.5] - 2026-10-27
+
+### 修复
+- 自动翻译的用法里若重复了很长的英文技能名，会在 40 字处被截断（如 `chinese-text-breat`）。现在解析时会自动把技能名替换为「该技能」，提示词也要求不要重复英文名。
+- `chinese-text-breath`、`novel-outline-worldbuilding` 两条手动改写为干净版本。
+
 ## [0.9.4] - 2026-10-27
 
 ### 修复
