@@ -7,7 +7,7 @@
 
 给 DSH（DeepSeek Harness）**已安装插件**配「中文名 + 一句话说明」，并给**插件与技能**加固定分类前缀：官方「插件」页的已安装插件行、插件包卡片与详情页**原地显示中文名与中文描述**（分类显示为 `【分类】…`）；`/` 技能菜单里每条技能显示 `【分类】作用；用法：怎么用`。新装插件/技能在启动后自动翻译、自动补分类。**本插件没有任何 UI 入口**（没有 tab、没有设置项），管理通过 loopback HTTP API 或让 AI 代改。
 
-- 当前版本：**0.10.1**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
+- 当前版本：**0.10.2**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
 - 只支持 DSH 桌面版 Web GUI（开发验证版本 0.2.1-rc.2 / rc.3）
 
 ## 功能
@@ -62,12 +62,14 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 用户的技能大多是英文。命中翻译缓存后，本插件会**把技能描述替换成纯中文**（不再显示英文原文，`/` 菜单一行显示完整中文）：
 
 ```
-【分类】<中文作用>；用法：<什么时候用、怎么触发>      # 有分类时（v0.10.0+）
-中文：<中文作用>；用法：<什么时候用、怎么触发>        # 暂无分类时
+【分类】<中文介绍>          # 有分类时（v0.10.2+）
+中文：<中文介绍>            # 暂无分类时
 ```
 
+> 介绍只讲「这个技能做什么、什么时候有用、产出什么」，不再写「对 AI 说用某某技能」——左边已经显示技能名了。
+
 - **实现**：host 包装 `skills` 服务的 `snapshot`/`list`，命中缓存才替换描述，未命中保持原样（`/` 菜单走 `skills.list`，模型侧技能目录走同一份 description）。
-- **缓存**：`<DSH_HOME>/plugin-labels-skills.json`（独立于插件标签缓存，`version: 1`，UTF-8 无 BOM、原子写）；每条 `{zh ≤22 字, usage ≤60 字, source: "ai" | "manual", at, category?}`。用法里优先写具体技能名。
+- **缓存**：`<DSH_HOME>/plugin-labels-skills.json`（独立于插件标签缓存，`version: 1`，UTF-8 无 BOM、原子写）；每条 `{zh ≤60 字, source: "ai" | "manual", at, category?}`；旧的 `usage` 字段仍在文件里但不再显示。
 - **API**（见「使用」）：`GET /api/plugin-labels/skills`、`POST /api/plugin-labels/skills/translate`、`POST /api/plugin-labels/skills/label`。
 - **自动翻译**：启动后约 4 秒的自动任务在补完插件标签后，会再补最多 **10** 条技能说明（`MAX_SKILLS_PER_AUTO`）；只补空缺、不覆盖手改；`DSH_PLUGIN_LABELS_AUTO_TRANSLATE=0` 同时关闭插件与技能自动翻译。
 - **新技能自动补翻译（v0.9.4）**：每 **5 分钟**扫描一次 `~/.agents/skills`、`$DSH_HOME/skills`、`<cwd>/.agents/skills` 下新增的 `SKILL.md`，发现未翻译的自动补；间隔用 `DSH_PLUGIN_LABELS_SKILL_SCAN_MS` 调整（最小 60000，`0` 关闭）。同一轮里也会补缺失的分类。
@@ -93,7 +95,7 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 ### 方式一：npm 包（推荐，`npm publish` 后）
 
 在 DSH 插件页 → 添加插件 → 填包名 `dsh-plugin-labels`；或在创造模式会话里 `plugin_manager` → `install_bundle` → `target: "dsh-plugin-labels"`。发布后 profile 依赖形如
-`"dsh-plugin-labels": "dsh-plugin-labels@^0.10.1"`。
+`"dsh-plugin-labels": "dsh-plugin-labels@^0.10.2"`。
 
 ### 方式二：从 Git 仓库安装
 
@@ -109,7 +111,7 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 
 ## 使用
 
-v0.10.1 起没有 UI 入口，全部通过 8 个 loopback HTTP API 操作（也可以让 AI/脚本代改）：
+v0.10.2 起没有 UI 入口，全部通过 8 个 loopback HTTP API 操作（也可以让 AI/脚本代改）：
 
 ```powershell
 # 查看已装插件 + 标签 + 诊断字段（officialMeta）
