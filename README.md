@@ -7,7 +7,7 @@
 
 给 DSH（DeepSeek Harness）**已安装插件**配「中文名 + 一句话说明」，并给**插件与技能**加固定分类前缀：官方「插件」页的已安装插件行、插件包卡片与详情页**原地显示中文名与中文描述**（分类显示为 `【分类】…`）；`/` 技能菜单里每条技能显示 `【分类】作用；用法：怎么用`。新装插件/技能在启动后自动翻译、自动补分类。**本插件没有任何 UI 入口**（没有 tab、没有设置项），管理通过 loopback HTTP API 或让 AI 代改。
 
-- 当前版本：**0.10.2**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
+- 当前版本：**0.10.3**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
 - 只支持 DSH 桌面版 Web GUI（开发验证版本 0.2.1-rc.2 / rc.3）
 
 ## 功能
@@ -95,7 +95,7 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 ### 方式一：npm 包（推荐，`npm publish` 后）
 
 在 DSH 插件页 → 添加插件 → 填包名 `dsh-plugin-labels`；或在创造模式会话里 `plugin_manager` → `install_bundle` → `target: "dsh-plugin-labels"`。发布后 profile 依赖形如
-`"dsh-plugin-labels": "dsh-plugin-labels@^0.10.2"`。
+`"dsh-plugin-labels": "dsh-plugin-labels@^0.10.3"`。
 
 ### 方式二：从 Git 仓库安装
 
@@ -111,7 +111,7 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 
 ## 使用
 
-v0.10.2 起没有 UI 入口，全部通过 8 个 loopback HTTP API 操作（也可以让 AI/脚本代改）：
+v0.10.3 起没有 UI 入口，全部通过 8 个 loopback HTTP API 操作（也可以让 AI/脚本代改）：
 
 ```powershell
 # 查看已装插件 + 标签 + 诊断字段（officialMeta）
