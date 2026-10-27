@@ -5,9 +5,9 @@
 
 > 版本更新记录见 [CHANGELOG.md](CHANGELOG.md)，或在 GitHub [Releases](https://github.com/qyy2005/dsh-plugin-labels/releases) 查看。
 
-给 DSH（DeepSeek Harness）**已安装插件**配「中文名 + 一句话说明」，并给**插件与技能**加固定分类前缀：官方「插件」页的已安装插件行、插件包卡片与详情页**原地显示中文名与中文描述**（分类显示为 `【分类】…`）；`/` 技能菜单里每条技能显示 `【分类】作用；用法：怎么用`。新装插件/技能在启动后自动翻译、自动补分类。**本插件没有任何 UI 入口**（没有 tab、没有设置项），管理通过 loopback HTTP API 或让 AI 代改。
+给 DSH（DeepSeek Harness）**已安装插件**配「中文名 + 一句话说明」，并给**插件与技能**加固定分类前缀：官方「插件」页的已安装插件行、插件包卡片与详情页**原地显示中文名与中文描述**（分类显示为 `【分类】…`）；`/` 技能菜单里每条技能显示 `【分类】作用；用法：怎么用`。新装插件/技能在启动后自动翻译、自动补分类；`D:\workspace\dsh-docs` 下的两份**汇总文档**也会随标签变化自动重写。**本插件没有任何 UI 入口**（没有 tab、没有设置项），管理通过 loopback HTTP API 或让 AI 代改。
 
-- 当前版本：**0.10.3**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
+- 当前版本：**0.10.4**（本仓库即源码目录；通过 `plugin_manager install_bundle` 从 GitHub 或 npm 安装到 DSH profile）
 - 只支持 DSH 桌面版 Web GUI（开发验证版本 0.2.1-rc.2 / rc.3）
 
 ## 功能
@@ -16,6 +16,7 @@
 - **官方页原地中文**：官方「插件」页的已安装插件行、点开的详情页，以及插件包卡片（`listBundles`）都会直接显示中文名与中文描述；未翻译的插件回退英文。默认开启。
 - **技能中文翻译**：`/` 技能菜单里每条技能显示纯中文作用与用法，看懂技能是做什么、什么时候用（见「技能中文翻译」）。
 - **分类前缀**：插件与技能都带固定分类（基础/开发/设计/办公/团队/界面/写作/工具/远程），显示为 `【分类】…`；翻译时自动产出，历史条目由分类任务自动补齐（见「分类前缀」）。
+- **汇总文档自动更新**：`D:\workspace\dsh-docs\插件汇总.md` 与 `技能汇总.md` 随标签/分类变化自动重写（见「汇总文档自动更新」）。
 - **自动翻译新插件与新技能**：host 启动约 4 秒后自动补一次缺失标签（每次最多 20 条）、技能说明（≤10 条）与缺失分类；之后每 5 分钟扫描新增技能并补分类；只补空缺、不覆盖手改。
 - **手改优先**：手动设置的标签/分类不会被自动流程覆盖；显式“重翻”才会覆盖。
 - **无 UI 管理入口**：通过 8 个 loopback HTTP API（见「使用」）或让 AI/脚本直接调用它们来翻译、分类、手改、重翻、导入导出。
@@ -89,6 +90,17 @@ host 启动约 **4 秒**后会自动补一次缺失标签：
 - **自动补齐历史条目**：启动 4 秒任务与每 5 分钟的技能扫描都会调用一次分类补齐——只处理**缺 category** 的条目，全部有分类时**不调用模型**；`DSH_PLUGIN_LABELS_AUTO_TRANSLATE=0` 时自动流程整体不跑。
 - **手动补齐/重分类**：`POST /api/plugin-labels/classify`（body 可传 `{"targets":["plugins","skills"]}`，默认两者；每批 ≤40 条；返回 `{ok:true, plugins:{updated,remaining}, skills:{updated,remaining}}`；并发 409）。
 - **手改分类**：`POST /api/plugin-labels/label` 或 `POST /api/plugin-labels/skills/label` 带可选 `category`（非法值 400）；不传则保留原分类。
+
+## 汇总文档自动更新
+
+`D:\workspace\dsh-docs` 下的两份人工汇总文档不再需要手动维护，host 会在标签/分类变化后自动重写：
+
+- `插件汇总.md`：已装插件 + 中文名 + 包名 + 说明/用法，按分类分组，附「分类概览」和附录表。
+- `技能汇总.md`：`技能缓存 + 运行中的技能目录` 合并去重，按分类分组，每条含技能名、中文介绍与通用用法；未翻译的技能标为「（待翻译）」。
+- **目录**：默认 `D:\workspace\dsh-docs`；可用环境变量 `DSH_PLUGIN_LABELS_DOCS_DIR` 覆盖。目录不存在会自动创建；**绝不写 C 盘**（配置指向 C: 时直接跳过并 warn）。
+- **刷新时机**：启动 4 秒自动任务末尾、每 5 分钟周期任务末尾，以及 `POST /translate`、`POST /label`、`POST /skills/translate`、`POST /skills/label`、`POST /classify` 成功写缓存之后。
+- **省磁盘**：只有「生成时间」一行变化时**不重写**文件；UTF-8 无 BOM、原子写、末尾换行。
+- **失败安全**：写失败只 warn，不影响翻译/分类主流程；路径与网络均不依赖外部服务。
 
 ## 安装
 
@@ -190,6 +202,7 @@ npm run docs                            # 等价于 node scripts/gen-doc.mjs
   - `POST /api/plugin-labels/classify`（补缺失分类；`{targets?}`；单飞锁，并发 409）
 - **自动翻译/分类**：`apply` 里注册一个 4 秒后执行一次的定时器（`unref`），先 `translatePending` 补插件标签、再 `translateSkillsPending` 补最多 10 条技能说明、最后 `classifyMissing` 补缺失分类；每 5 分钟的技能扫描也串联 `translateSkillsPending` + `classifyMissing`；可用 `DSH_PLUGIN_LABELS_AUTO_TRANSLATE=0` 关闭；异常只 warn。
 - **分类**：白名单 `ALLOWED_CATEGORIES`（基础/开发/设计/办公/团队/界面/写作/工具/远程）；缓存条目可选 `category`；插件注入 `【分类】oneLine`、技能注入 `【分类】zh；用法：usage`（无分类时技能保留 `中文：…`）；`classifyMissing` 只处理缺分类条目、每批 ≤40、无缺失不调模型。
+- **汇总文档**：`writeSummaryDocs(home)` 生成两份 Markdown（默认 `D:\workspace\dsh-docs`，`DSH_PLUGIN_LABELS_DOCS_DIR` 可覆盖，拒绝 C 盘）；启动/周期任务链末尾与各写缓存 API 后调用；比较时忽略「生成时间」行，内容没变不重写，失败只 warn。
 - **显示/技能覆盖**：`installOfficialMeta` / `installBundleMeta` / `installSkillTranslations` 用 symbol 标记识别 wrapper，幂等、可 dispose、服务替换后重打、失败静默回退。`DSH_PLUGIN_LABELS_OFFICIAL_META=0` 关闭前两个显示覆盖（技能翻译不受影响）。
 - **安全围栏**：loopback 校验、`sec-fetch-site` 跨站拒绝、POST-only、翻译/技能翻译/分类各一把单飞锁（并发 409）、`AbortSignal.timeout(120s)`、未预期异常统一 500 不泄漏路径。
 - **缓存**：插件标签 `<DSH_HOME>/plugin-labels.json`（v2，旧 v1 可迁移）、技能说明 `<DSH_HOME>/plugin-labels-skills.json`（v1）；每条可选 `category`，均 UTF-8 无 BOM，临时文件 + `rename` 原子写，单条非法条目丢弃。
@@ -239,4 +252,6 @@ Each label is a Chinese name (≤10 characters) plus a one-line explanation (≤
 
 Newly installed plugins are translated automatically: about 4 seconds after host startup one pass fills up to 20 missing labels, then up to 10 skill explanations, then missing categories; the periodic skill scan repeats translation and classification every few minutes (set `DSH_PLUGIN_LABELS_AUTO_TRANSLATE=0` and restart DSH to disable all of it). The display overrides can be disabled together with `DSH_PLUGIN_LABELS_OFFICIAL_META=0`; `GET /api/plugin-labels/list` reports `officialMeta: {enabled, patched, service, bundles, skills}` for diagnostics. These hooks require one DSH restart after installation.
 
-The client half is a hand-written `__ModuleLoader__` bundle with no build step that only requires `react` (v0.7.0: locale registration only, no UI); the host half is an ESM plugin exposing eight loopback-only HTTP routes plus the display overrides, the skill translation hook, category classification and the startup/periodic auto-translate. Verified on DSH desktop 0.2.1-rc.2 / rc.3. MIT licensed.
+It also keeps two human-facing Markdown summaries in sync: `插件汇总.md` and `技能汇总.md` under `D:\workspace\dsh-docs` (override with `DSH_PLUGIN_LABELS_DOCS_DIR`, never written to the C: drive). They are regenerated after the startup/periodic auto passes and after every API that writes a cache, only when their visible content changed (the 生成时间 line is ignored), with UTF-8 no-BOM atomic writes; write failures only log a warning.
+
+The client half is a hand-written `__ModuleLoader__` bundle with no build step that only requires `react` (v0.7.0: locale registration only, no UI); the host half is an ESM plugin exposing eight loopback-only HTTP routes plus the display overrides, the skill translation hook, category classification, the startup/periodic auto-translate and the summary-doc writer. Verified on DSH desktop 0.2.1-rc.2 / rc.3. MIT licensed.

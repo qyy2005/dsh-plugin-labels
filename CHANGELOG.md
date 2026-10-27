@@ -2,6 +2,12 @@
 
 本文件记录 `dsh-plugin-labels` 的版本变更；GitHub Releases 页面按版本展示同样的内容。
 
+## [0.10.4] - 2026-10-27
+
+### 新增
+- **汇总文档自动更新**：新增 `writeSummaryDocs(home)`，从插件标签缓存 + 技能缓存 + 运行中的技能目录生成 `插件汇总.md` 与 `技能汇总.md`（默认 `D:\workspace\dsh-docs`，可用 `DSH_PLUGIN_LABELS_DOCS_DIR` 覆盖；UTF-8 无 BOM、原子写；**绝不写 C 盘**）。
+- 刷新时机：启动 4 秒自动任务末尾、每 5 分钟周期任务末尾，以及 `POST /translate`、`POST /label`、`POST /skills/translate`、`POST /skills/label`、`POST /classify` 成功写缓存后。内容只有生成时间变化时**不重写**；写失败只 warn，不影响翻译流程。
+
 ## [0.10.3] - 2026-10-27
 
 ### 修复
